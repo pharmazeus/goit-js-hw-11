@@ -1,4 +1,4 @@
-.container {
+.gallery-container {
   max-width: 1158px;
   padding: 0 15px 0 15px;
   margin-left: auto;
@@ -7,6 +7,6 @@
   display: flex;
   justify-content: center;
 }
-.section {
+.gallery-section {
   padding-top: 36px;
 }
