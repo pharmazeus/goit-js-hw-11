@@ -15,55 +15,89 @@ const toggleLoader = isLoading => {
   loader.style.display = isLoading ? 'block' : 'none';
 };
 
-const onSearchFormSubmit = event => {
-  event.preventDefault();
+const onSearchFormSubmit = async event => {
+  try {
+    event.preventDefault();
 
-  let searchedQuery = event.currentTarget.elements.name_query.value.trim();
+    let searchedQuery = event.currentTarget.elements.name_query.value.trim();
 
-  if (searchedQuery === '') {
-    iziToast.error({
-      title: 'Warning',
-      message: 'Empty field , please insert your query...',
-    });
-    return;
-  }
-
-  toggleLoader(true);
-  galleryList.innerHTML = '';
-
-  fetchPicsByQuery(searchedQuery)
-    .then(data => {
-      loader.style.display = 'none';
-
-      if (data.hits.length === 0) {
-        iziToast.error({
-          title: '',
-          message: 'Sorry, there are no images matching your search query. Please try again!',
-          color: 'rgb(20, 62, 12);',
-        });
-
-        searchForm.reset();
-        return;
-      }
-
-      const galleryCardTemplate = data.hits.map(el => createGalleryCardTemplate(el)).join('');
-
-      galleryList.innerHTML = galleryCardTemplate;
-      //
-      new SimpleLightbox('.js-gallery a', {
-        captionsData: 'alt',
-        captionsDelay: 250,
-      });
-    })
-    .catch(error => {
-      console.log(error);
+    if (searchedQuery === '') {
       iziToast.error({
-        title: 'Error',
-        message: 'Something went wrong... Please try again later.',
+        title: 'Warning',
+        message: 'Empty field , please insert your query...',
       });
-    })
-    .finally(() => {
-      toggleLoader(false);
+      return;
+    }
+
+    toggleLoader(true);
+    galleryList.innerHTML = '';
+
+    const response = await fetchPicsByQuery(searchedQuery);
+    console.log(response);
+
+    loader.style.display = 'none';
+
+    if (response.data.hits.length === 0) {
+      iziToast.error({
+        title: '',
+        message: 'Sorry, there are no images matching your search query. Please try again!',
+      });
+
+      searchForm.reset();
+      return;
+    }
+
+    const galleryCardTemplate = response.data.hits
+      .map(el => createGalleryCardTemplate(el))
+      .join('');
+
+    galleryList.innerHTML = galleryCardTemplate;
+    //
+    new SimpleLightbox('.js-gallery a', {
+      captionsData: 'alt',
+      captionsDelay: 250,
     });
+  } catch (err) {
+    console.log(err);
+    iziToast.error({
+      title: 'Error',
+      message: 'Something went wrong... Please try again later.',
+    });
+  }
 };
+
 searchForm.addEventListener('submit', onSearchFormSubmit);
+
+//fetchPicsByQuery(searchedQuery)
+// .then(data => {
+// loader.style.display = 'none';
+
+// if (data.hits.length === 0) {
+//   iziToast.error({
+//     title: '',
+//     message: 'Sorry, there are no images matching your search query. Please try again!',
+//   });
+
+//   searchForm.reset();
+//   return;
+// }
+
+// const galleryCardTemplate = data.hits.map(el => createGalleryCardTemplate(el)).join('');
+
+// galleryList.innerHTML = galleryCardTemplate;
+// //
+// new SimpleLightbox('.js-gallery a', {
+//   captionsData: 'alt',
+//   captionsDelay: 250,
+// });
+// })
+// .catch(error => {
+//   console.log(error);
+// iziToast.error({
+//   title: 'Error',
+//   message: 'Something went wrong... Please try again later.',
+// });
+// })
+// .finally(() => {
+//   toggleLoader(false);
+// });
