@@ -49,6 +49,7 @@ const onSearchFormSubmit = async event => {
     }
 
     const galleryCardTemplate = data.hits.map(el => createGalleryCardTemplate(el)).join('');
+    console.log(data.hits);
 
     galleryList.innerHTML = galleryCardTemplate;
     //
