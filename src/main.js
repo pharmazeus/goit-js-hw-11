@@ -24,6 +24,7 @@ const onSearchFormSubmit = async event => {
     if (searchedQuery === '') {
       iziToast.error({
         title: 'Warning',
+        position: 'topRight',
         message: 'Empty field , please insert your query...',
       });
       return;
@@ -32,14 +33,14 @@ const onSearchFormSubmit = async event => {
     toggleLoader(true);
     galleryList.innerHTML = '';
 
-    const response = await fetchPicsByQuery(searchedQuery);
-    console.log(response);
+    const { data } = await fetchPicsByQuery(searchedQuery);
 
     loader.style.display = 'none';
 
-    if (response.data.hits.length === 0) {
+    if (data.hits.length === 0) {
       iziToast.error({
         title: '',
+        position: 'topRight',
         message: 'Sorry, there are no images matching your search query. Please try again!',
       });
 
@@ -47,9 +48,7 @@ const onSearchFormSubmit = async event => {
       return;
     }
 
-    const galleryCardTemplate = response.data.hits
-      .map(el => createGalleryCardTemplate(el))
-      .join('');
+    const galleryCardTemplate = data.hits.map(el => createGalleryCardTemplate(el)).join('');
 
     galleryList.innerHTML = galleryCardTemplate;
     //
@@ -61,13 +60,14 @@ const onSearchFormSubmit = async event => {
     console.log(err);
     iziToast.error({
       title: 'Error',
+      position: 'topRight',
       message: 'Something went wrong... Please try again later.',
     });
   }
 };
 
 searchForm.addEventListener('submit', onSearchFormSubmit);
-
+//old fetch
 //fetchPicsByQuery(searchedQuery)
 // .then(data => {
 // loader.style.display = 'none';

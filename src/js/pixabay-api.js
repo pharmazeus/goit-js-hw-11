@@ -13,7 +13,7 @@ export const fetchPicsByQuery = searchedQuery => {
 
   return axios.get(`${BASE_URL}?${searchParams}`);
 };
-
+//old fetch
 // const url = `${BASE_URL}?${searchParams}`;
 
 // return fetch(url).then(response => {
